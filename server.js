@@ -1,176 +1,167 @@
-// Server.js
-
 const express = require("express");
 const app = express();
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
-const { STATUS_CODES, API_URLS, PORTS } = require("./constants");
-const { error } = require("console");
 
+const { API_URLS, STATUS_CODES, PORTS } = require("./constants");
 const PORT = PORTS.SERVER || 5000;
 
-app.use(express.json());
+let bookCollection = [];
+let borrowedBooks = [];
 
-const assignUniqueIds = (books) => {
-  return books.map((book) => {
-    if (!book.id) {
-      book.id = uuidv4();
-    }
-    return book;
-  });
+const assignUniqueID = (book) => {
+  if (!book.bookID) {
+    book.bookID = uuidv4();
+  }
+  return book;
 };
 
-app.get(API_URLS.GET_BOOKS, (req, res) => {
-  fs.readFile("bookcollection.json", "utf8", (err, data) => {
-    if (err) {
-      return res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ msg: "Error reading file", error: err });
-    }
-    try {
-      let bookCollection = JSON.parse(data);
-      bookCollection = assignUniqueIds(bookCollection);
-      return res.json(bookCollection);
-    } catch (err) {
-      return res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ msg: "Error parsing JSON data", error: err });
-    }
-  });
+const loadBookData = () => {
+  try {
+    bookCollection = JSON.parse(
+      fs.readFileSync("./bookcollection.json", "utf8")
+    );
+    bookCollection.forEach((book) => {
+      assignUniqueID(book);
+    });
+  } catch (err) {
+    console.log("No existing book collection found.");
+  }
+  try {
+    borrowedBooks = JSON.parse(fs.readFileSync("./borrowedBooks.json", "utf8"));
+  } catch (err) {
+    console.log("No existing borrowed books found.");
+  }
+};
+
+app.use(loadBookData);
+app.use(express.json());
+
+app.get(API_URLS.SHOW_BOOK, (req, res) => {
+  if (bookCollection.length === 0) {
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json({ message: "No books available." });
+  }
+  res.status(STATUS_CODES.SUCCESS).json(bookCollection);
 });
 
 app.post(API_URLS.ADD_BOOK, (req, res) => {
-  const bookData = req.body;
-  bookData.id = uuidv4();
+  const { bookName, bookAuthor, bookDOP, bookEdition } = req.body;
 
-  fs.readFile("bookcollection.json", "utf8", (err, data) => {
-    let bookCollection = [];
+  if (!bookName || !bookAuthor || !bookDOP || !bookEdition) {
+    return res
+      .status(STATUS_CODES.BAD_REQUEST)
+      .json({ message: "Missing required fields." });
+  }
 
-    if (!err) {
-      try {
-        bookCollection = JSON.parse(data);
-      } catch (err) {
+  const newBook = { bookName, bookAuthor, bookDOP, bookEdition };
+  assignUniqueID(newBook);
+
+  bookCollection.push(newBook);
+
+  fs.writeFile(
+    "./bookcollection.json",
+    JSON.stringify(bookCollection, null, 2),
+    (err) => {
+      if (err) {
         return res
           .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-          .json({ msg: "Error parsing JSON data", error: err });
+          .json({ message: "Error adding the book to the collection." });
+      }
+      res
+        .status(STATUS_CODES.CREATED)
+        .json({ message: "Book added successfully.", book: newBook });
+    }
+  );
+});
+
+app.post(API_URLS.BORROW_BOOK, (req, res) => {
+  const { bookID } = req.body;
+
+  if (!bookID) {
+    return res
+      .status(STATUS_CODES.BAD_REQUEST)
+      .json({ message: "Missing bookID." });
+  }
+
+  const bookToBorrow = bookCollection.find((book) => book.bookID === bookID);
+
+  if (!bookToBorrow) {
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json({ message: "Book not found." });
+  }
+
+  borrowedBooks.push(bookToBorrow);
+  bookCollection = bookCollection.filter((book) => book.bookID !== bookID);
+
+  fs.writeFile(
+    "./bookcollection.json",
+    JSON.stringify(bookCollection, null, 2),
+    (err) => {
+      if (err) {
+        return res
+          .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+          .json({ message: "Error saving the book collection." });
       }
     }
+  );
 
-    bookCollection.push(bookData);
-
-    fs.writeFile(
-      "bookcollection.json",
-      JSON.stringify(bookCollection),
-      (err) => {
-        if (err) {
-          return res
-            .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-            .json({ msg: "Error saving book data", error: err });
-        }
-        res
-          .status(STATUS_CODES.CREATED)
-          .json({ msg: "Book added successfully", bookId: bookData.id });
+  fs.writeFile(
+    "./borrowedBooks.json",
+    JSON.stringify(borrowedBooks, null, 2),
+    (err) => {
+      if (err) {
+        return res
+          .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+          .json({ message: "Error saving the borrowed books." });
       }
-    );
-  });
+      res
+        .status(STATUS_CODES.CREATED)
+        .json({ message: "Book borrowed successfully.", book: bookToBorrow });
+    }
+  );
 });
 
 app.patch(API_URLS.UPDATE_BOOK, (req, res) => {
-  const { id, bookName, bookDOP, bookEdition } = req.body;
+  const { bookName, bookAuthor, bookDOP, bookEdition, bookID } = req.body;
 
-  fs.readFile("bookcollection.json", "utf8", (err, data) => {
-    let bookCollection = [];
+  if (!bookName || !bookAuthor || !bookDOP || !bookEdition || bookID) {
+    return res
+      .status(STATUS_CODES.BAD_REQUEST)
+      .json({ message: "Missing required fields." });
+  }
 
-    if (err) {
-      return res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error reading file", details: err });
-    }
+  const bookToUpdate = bookCollection.find((book) => book.bookID === bookID);
 
-    try {
-      bookCollection = JSON.parse(data);
-    } catch (jsonError) {
-      return res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error parsing JSON data", details: jsonError });
-    }
+  if (!bookToUpdate) {
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json({ message: "Book not found." });
+  }
 
-    const bookIndex = bookCollection.findIndex((book) => book.id === id);
+  bookToUpdate.bookName = bookName;
+  bookToUpdate.bookAuthor = bookAuthor;
+  bookToUpdate.bookDOP = bookDOP;
+  bookToUpdate.bookEdition = bookEdition;
 
-    if (bookIndex === -1) {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .json({ error: "Book not found", details: { id } });
-    }
-
-    if (bookName) bookCollection[bookIndex].bookName = bookName;
-    if (bookDOP) bookCollection[bookIndex].bookDOP = bookDOP;
-    if (bookEdition) bookCollection[bookIndex].bookEdition = bookEdition;
-
-    fs.writeFile(
-      "bookcollection.json",
-      JSON.stringify(bookCollection),
-      (err) => {
-        if (err) {
-          return res
-            .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-            .json({ error: "Error saving book data", details: err });
-        }
-        res
-          .status(STATUS_CODES.SUCCESS)
-          .json({ message: "Book updated successfully", bookId: id });
+  fs.writeFile(
+    "./bookcollection.json",
+    JSON.stringify(bookCollection, null, 2),
+    (err) => {
+      if (err) {
+        return res
+          .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+          .json({ message: "Error updating the book collection." });
       }
-    );
-  });
-});
-
-app.delete(API_URLS.DELETE_BOOK, (req, res) => {
-  const { id } = req.body;
-
-  fs.readFile("bookcollection.json", "utf8", (err, data) => {
-    let bookCollection = [];
-
-    if (err) {
-      return res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error reading file", details: err });
+      res
+        .status(STATUS_CODES.SUCCESS)
+        .json({ message: "Book updated successfully.", book: bookToUpdate });
     }
-
-    try {
-      bookCollection = JSON.parse(data);
-    } catch (jsonError) {
-      return res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({ error: "Error parsing JSON data", details: jsonError });
-    }
-
-    const bookIndex = bookCollection.findIndex((book) => book.id === id);
-
-    if (bookIndex === -1) {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .json({ error: "Book not found", details: { id } });
-    }
-
-    bookCollection.splice(bookIndex, 1);
-
-    fs.writeFile(
-      "bookcollection.json",
-      JSON.stringify(bookCollection),
-      (err) => {
-        if (err) {
-          return res
-            .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-            .json({ error: "Error deleting book data", details: err });
-        }
-        res
-          .status(STATUS_CODES.SUCCESS)
-          .json({ message: "Book deleted successfully", bookId: id });
-      }
-    );
-  });
+  );
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

@@ -1,22 +1,23 @@
 // constants.js
 
-const PORTS = {
-  SERVER: 5000,
-  UIUX: 3000,
-};
+module.exports = {
+  API_URLS: {
+    ADD_BOOK: "/homepage/addbook",
+    BORROW_BOOK: "/homepage/borrowbook",
+    UPDATE_BOOK: "/homepage/updatebook",
+    DELETE_BOOK: "/homepage/deletebook",
+    SHOW_BOOK: "/homepage/showbook",
+  },
 
-const STATUS_CODES = {
-  SUCCESS: 200,
-  BAD_REQUEST: 400,
-  NOT_FOUND: 404,
-  INTERNAL_SERVER_ERROR: 500,
-};
+  STATUS_CODES: {
+    SUCCESS: 200,
+    CREATED: 201,
+    INTERNAL_SERVER_ERROR: 500,
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404,
+  },
 
-const API_URLS = {
-  GET_BOOKS: "/api/books/get",
-  ADD_BOOK: "/api/books/add",
-  UPDATE_BOOK: "/api/books/update",
-  DELETE_BOOK: "/api/books/delete",
+  PORTS: {
+    SERVER: 5000,
+  },
 };
-
-module.exports = { STATUS_CODES, API_URLS, PORTS };
