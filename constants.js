@@ -7,6 +7,7 @@ module.exports = {
     UPDATE_BOOK: "/homepage/updatebook",
     DELETE_BOOK: "/homepage/deletebook",
     SHOW_BOOK: "/homepage/showbook",
+    BASE_URL: "http://localhost:5000"
   },
 
   STATUS_CODES: {
