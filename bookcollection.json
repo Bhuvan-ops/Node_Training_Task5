@@ -1,0 +1,32 @@
+[
+    {
+        "bookName": "Malgudi Days",
+        "bookAuthor": "R.K. Narayan",
+        "bookDOP": "15-08-1943",
+        "bookEdition": "First Edition"
+    },
+    {
+        "bookName": "Rich Dad Poor Dad",
+        "bookAuthor": "Robert T. Kiyosaki",
+        "bookDOP": "10-05-1997",
+        "bookEdition": "10th Anniversary Edition"
+    },
+    {
+        "bookName": "The Monk Who Sold His Ferrari",
+        "bookAuthor": "Robin Sharma",
+        "bookDOP": "12-06-1997",
+        "bookEdition": "First Edition"
+    },
+    {
+        "bookName": "The Island of the Blue Dolphins",
+        "bookAuthor": "Scott O'Dell",
+        "bookDOP": "23-09-1960",
+        "bookEdition": "50th Anniversary Edition"
+    },
+    {
+        "bookName": "Goosebumps",
+        "bookAuthor": "R.L. Stine",
+        "bookDOP": "15-07-1992",
+        "bookEdition": "First Edition"
+    }
+]
