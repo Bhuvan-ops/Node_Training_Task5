@@ -1,44 +1,32 @@
 [
   {
-    "bookName": "Rich Dad Poor Dad",
-    "bookAuthor": "Robert T. Kiyosaki",
-    "bookDOP": "10-05-1997",
-    "bookEdition": "10th Anniversary Edition",
-    "bookID": "813e6192-aab6-43f5-be2f-dd908e98367c"
-  },
-  {
     "bookName": "The Monk Who Sold His Ferrari",
     "bookAuthor": "Robin Sharma",
     "bookDOP": "12-06-1997",
-    "bookEdition": "Second Edition",
-    "bookID": "f3beb13a-0ba2-4b68-8cb2-f109af44575f"
+    "bookEdition": "Second Edition"
   },
   {
     "bookName": "The Island of the Blue Dolphins",
     "bookAuthor": "Scott O'Dell",
     "bookDOP": "23-09-1960",
-    "bookEdition": "50th Anniversary Edition",
-    "bookID": "881a9556-d321-4b0b-9cab-a8f1780b22ee"
+    "bookEdition": "50th Anniversary Edition"
   },
   {
     "bookName": "Goosebumps",
     "bookAuthor": "R.L. Stine",
     "bookDOP": "15-07-1992",
-    "bookEdition": "First Edition",
-    "bookID": "8b72c23d-16db-4eff-a03b-e4975e930f3a"
+    "bookEdition": "First Edition"
   },
   {
     "bookName": "Malgudi Days",
     "bookAuthor": "R.K. Narayan",
     "bookDOP": "15-08-1943",
-    "bookEdition": "Special Edition",
-    "bookID": "fba51c6c-4858-4bd6-912a-354b7223727c"
+    "bookEdition": "Special Edition"
   },
   {
-    "bookName": "The Catcher in the Rye",
-    "bookAuthor": "J.D. Salinger",
-    "bookDOP": "16-07-1951",
-    "bookEdition": "First Edition",
-    "bookID": "bf0a483e-e29c-455d-a75d-4eef56158039"
+    "bookName": "Rich Dad Poor Dad",
+    "bookAuthor": "Robert T. Kiyosaki",
+    "bookDOP": "10-05-1997",
+    "bookEdition": "10th Anniversary Edition"
   }
 ]
