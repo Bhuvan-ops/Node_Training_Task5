@@ -1,9 +1,1 @@
 .env
-
-package.json
-
-package-lock.json
-
-./constants.js
-
-node_modules
