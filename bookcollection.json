@@ -3,30 +3,35 @@
     "bookName": "The Monk Who Sold His Ferrari",
     "bookAuthor": "Robin Sharma",
     "bookDOP": "12-06-1997",
-    "bookEdition": "Second Edition"
+    "bookEdition": "Second Edition",
+    "bookID": "dd79a055-48ec-4f28-abed-5acad02f31f2"
   },
   {
     "bookName": "The Island of the Blue Dolphins",
     "bookAuthor": "Scott O'Dell",
     "bookDOP": "23-09-1960",
-    "bookEdition": "50th Anniversary Edition"
+    "bookEdition": "50th Anniversary Edition",
+    "bookID": "19bf86e8-fa1c-4861-bf99-c63a4e4eda03"
   },
   {
     "bookName": "Goosebumps",
     "bookAuthor": "R.L. Stine",
     "bookDOP": "15-07-1992",
-    "bookEdition": "First Edition"
+    "bookEdition": "First Edition",
+    "bookID": "f5b13590-67d1-4955-b7aa-d46daaf95cc3"
   },
   {
     "bookName": "Malgudi Days",
     "bookAuthor": "R.K. Narayan",
     "bookDOP": "15-08-1943",
-    "bookEdition": "Special Edition"
+    "bookEdition": "Special Edition",
+    "bookID": "14007db9-9de7-4644-886a-ca23fe19aad1"
   },
   {
     "bookName": "Rich Dad Poor Dad",
     "bookAuthor": "Robert T. Kiyosaki",
     "bookDOP": "10-05-1997",
-    "bookEdition": "10th Anniversary Edition"
+    "bookEdition": "10th Anniversary Edition",
+    "bookID": "f4cd07c6-af19-4f8b-861e-b89ce714def4"
   }
 ]
